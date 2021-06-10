@@ -10,9 +10,9 @@ see [test/renderer.spec.tsx](test/renderer.spec.tsx)
 import renderXML, { XML, xmlElement } from 'react-xml';
 
 // you can create XML elements using the xmlElement helper:
-const foo = xmlElement('foo');
+const Foo = xmlElement('foo');
 
-const fooBarJsx = <foo asdf="123">bar</foo>;
+const fooBarJsx = <Foo asdf="123">bar</Foo>;
 
 // or use the XML proxy instead:
 const fooBarJsx2 = <XML.foo asdf="123">bar</XML.foo>;
