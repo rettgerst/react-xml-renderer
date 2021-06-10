@@ -14,9 +14,8 @@ const foo = xmlElement('foo');
 
 const fooBarJsx = <foo asdf="123">bar</foo>;
 
-
 // or use the XML proxy instead:
-const fooBarJsx2 = <XML.foo asdf="123">bar</foo>;
+const fooBarJsx2 = <XML.foo asdf="123">bar</XML.foo>;
 
 // render your JSX to an xml string:
 
