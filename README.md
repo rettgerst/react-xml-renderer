@@ -1,46 +1,31 @@
-# react-tiny-dom
+# react-xml
 
-`react-tiny-dom` is a minimal implementation of [react-dom](https://reactjs.org/docs/react-dom.html) as custom renderer using React 16 official Renderer API.
+this is a small react renderer which allows you to render arbitrary XML using JSX.
 
-The purpose of this project is to show the meaning of each method of the `ReconcilerConfig` passed to [react-reconciler](https://github.com/facebook/react/tree/master/packages/react-reconciler), by using a practical yet familiar environment: the browser DOM.
+# usage
 
-![react-tiny-dom](screenshot.png)
+see [test/renderer.spec.tsx](test/renderer.spec.tsx)
 
-## What's supported
+```tsx
+import renderXML, { XML, xmlElement } from 'react-xml';
 
-- Nested React components
-- `setState` updates
-- Text nodes
-- HTML Attributes
-- Event listeners
-- `className` prop
-- `style` prop
+// you can create XML elements using the xmlElement helper:
+const foo = xmlElement('foo');
 
-## What's not supported yet, but I plan to
+const fooBarJsx = <foo asdf="123">bar</foo>;
 
-The following features of `react-dom` are not supported yet but I'll probably add them:
 
-- Web Components
+// or use the XML proxy instead:
+const fooBarJsx2 = <XML.foo asdf="123">bar</foo>;
 
-Any other feature which doesn't help explaining the `Renderer API`, like `dangerouslySetInnerHTML`, won't be supported on purpose, to keep the source code minimal and focused on simplicity.
+// render your JSX to an xml string:
 
-## Installation
+const fooBar = renderXML(fooBarJsx);
+const fooBar2 = renderXml(fooBarJsx2);
 
-```
-npm install
-npm start # Runs the example using react-tiny-dom
+console.assert(fooBar === fooBar2); // true
 ```
 
-## FAQ
+# prior art
 
-### How can I customize the methods logs in the console?
-
-By default the demo logs most method calls of the Renderer, but you can pass a list of method names to exclude in the second parameter of `debugMethods`, when passing the `ReconcilerConfig` to `Reconciler`.
-
-```js
-const TinyDOMRenderer = Reconciler(
-  debugMethods(hostConfig, ['now', 'getChildHostContext', 'shouldSetTextContent'])
-);
-```
-
-Obviously passing `hostConfig` directly to `Reconciler` will completely disable any method log.
+react-xml is a stripped-down fork of [react-tiny-dom](https://github.com/jiayihu/react-tiny-dom/), and uses [jsdom](https://github.com/jsdom/jsdom) behind-the-scenes.

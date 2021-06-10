@@ -1,35 +1,40 @@
 {
-  "name": "react-xml",
-  "version": "0.0.0",
-  "description": "XML renderer for react",
-  "main": "index.js",
-  "scripts": {
-    "build": "tsc -p .",
-    "test": "jest"
-  },
-  "author": "rett gerst <tricagamma@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "deep-diff": "^0.3.8",
-    "fbjs": "^1.0.0",
-    "jsdom": "^16.6.0",
-    "react": "^16.6.1",
-    "react-reconciler": "^0.18.0"
-  },
-  "devDependencies": {
-    "@types/fbjs": "^3.0.0",
-    "@types/jest": "^26.0.23",
-    "@types/jsdom": "^16.2.11",
-    "@types/react": "^17.0.11",
-    "@types/react-reconciler": "^0.26.1",
-    "jest": "^27.0.4",
-    "ts-jest": "^27.0.3",
-    "typescript": "^4.3.2"
-  },
-  "keywords": [
-    "react",
-    "xml",
-    "renderer",
-    "reconciler"
-  ]
+	"name": "react-xml",
+	"version": "0.0.0",
+	"description": "XML renderer for react",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc -p .",
+		"test": "jest"
+	},
+	"author": "rett gerst <tricagamma@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"jsdom": "^16.6.0"
+	},
+	"devDependencies": {
+		"@tsconfig/node12": "^1.0.8",
+		"@types/fbjs": "^3.0.0",
+		"@types/jest": "^26.0.23",
+		"@types/jsdom": "^16.2.11",
+		"@types/react": "^17.0.11",
+		"@types/react-reconciler": "^0.26.1",
+		"jest": "^27.0.4",
+		"ts-jest": "^27.0.3",
+		"typescript": "^4.3.2"
+	},
+	"peerDependencies": {
+		"react": "^16.6.1",
+		"react-reconciler": "^0.18.0"
+	},
+	"keywords": [
+		"react",
+		"xml",
+		"renderer",
+		"reconciler"
+	],
+	"files": [
+		"dist/"
+	]
 }

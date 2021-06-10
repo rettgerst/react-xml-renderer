@@ -1,7 +1,5 @@
-import React, { DOMElement } from 'react';
-import Reconciler, { HostConfig } from 'react-reconciler';
-import emptyObject from 'fbjs/lib/emptyObject';
-import { debugMethods } from '../utils/debug-methods';
+import { ReactNode } from 'react';
+import Reconciler from 'react-reconciler';
 import { JSDOM } from 'jsdom';
 
 function shallowDiff(
@@ -20,35 +18,6 @@ function shallowDiff(
 	return changedProps;
 }
 
-function isUppercase(letter: string) {
-	return /[A-Z]/.test(letter);
-}
-
-function isUnitlessProperty(name: string): boolean {
-	throw new Error('Function not implemented.');
-}
-
-function setStyles(domElement: HTMLElement, styles: any) {
-	Object.keys(styles).forEach(name => {
-		const rawValue = styles[name];
-		const isEmpty =
-			rawValue === null ||
-			typeof rawValue === 'boolean' ||
-			rawValue === '';
-
-		// Unset the style to its default values using an empty string
-		if (isEmpty) domElement.style[name as any] = '';
-		else {
-			const value =
-				typeof rawValue === 'number' && !isUnitlessProperty(name)
-					? `${rawValue}px`
-					: rawValue;
-
-			domElement.style[name as any] = value;
-		}
-	});
-}
-
 const jsdom = new JSDOM(`<root></root>`, {
 	contentType: 'application/xml',
 	storageQuota: 10000000
@@ -57,13 +26,6 @@ const jsdom = new JSDOM(`<root></root>`, {
 const { window } = jsdom;
 
 const { document } = window;
-
-function isEventName(propName: string) {
-	return (
-		propName.startsWith('on') &&
-		window.hasOwnProperty(propName.toLowerCase())
-	);
-}
 
 const TinyDOMRenderer = Reconciler({
 	// appendChild for direct children
@@ -99,15 +61,13 @@ const TinyDOMRenderer = Reconciler({
 	finalizeInitialChildren(
 		domElement: HTMLElement,
 		type: any,
-		props: { [x: string]: any; autoFocus?: any }
+		props: { [x: string]: any }
 	) {
 		// Set the prop to the domElement
 		Object.keys(props).forEach(propName => {
 			const propValue = props[propName];
 
-			if (propName === 'style') {
-				setStyles(domElement, propValue);
-			} else if (propName === 'children') {
+			if (propName === 'children') {
 				// Set the textContent only for literal string or number children, whereas
 				// nodes will be appended in `appendChild`
 				if (
@@ -116,24 +76,14 @@ const TinyDOMRenderer = Reconciler({
 				) {
 					domElement.textContent = propValue.toString();
 				}
-			} else if (propName === 'className') {
-				domElement.setAttribute('class', propValue);
-			} else if (isEventName(propName)) {
-				const eventName = propName.toLowerCase().replace('on', '');
-				domElement.addEventListener(eventName, propValue);
 			} else {
+				if (!['string', 'number'].includes(typeof propValue))
+					throw new Error(
+						`Prop "${propName}" had type ${typeof propValue} - all attributes must be string or number!`
+					);
 				domElement.setAttribute(propName, propValue);
 			}
 		});
-
-		// Check if needs focus
-		switch (type) {
-			case 'button':
-			case 'input':
-			case 'select':
-			case 'textarea':
-				return !!props.autoFocus;
-		}
 
 		return false;
 	},
@@ -159,10 +109,10 @@ const TinyDOMRenderer = Reconciler({
 	},
 
 	getRootHostContext(rootInstance: any) {
-		return emptyObject;
+		return {};
 	},
 	getChildHostContext(parentHostContext: any, type: any) {
-		return emptyObject;
+		return {};
 	},
 
 	shouldSetTextContent(type: string, props: { children: any }) {
@@ -245,44 +195,13 @@ const TinyDOMRenderer = Reconciler({
 					domElement.textContent = propValue.toString();
 				}
 				return;
-			}
-
-			if (propName === 'style') {
-				// Return a diff between the new and the old styles
-				const styleDiffs = shallowDiff(oldProps.style, newProps.style);
-				const finalStyles = styleDiffs.reduce((acc: any, styleName) => {
-					// Style marked to be unset
-					if (!newProps.style[styleName]) acc[styleName] = '';
-					else acc[styleName] = newProps.style[styleName];
-
-					return acc;
-				}, {});
-
-				setStyles(domElement, finalStyles);
 			} else if (
 				newProps[propName] ||
 				typeof newProps[propName] === 'number'
 			) {
-				if (isEventName(propName)) {
-					const eventName = propName.toLowerCase().replace('on', '');
-					domElement.removeEventListener(
-						eventName,
-						oldProps[propName]
-					);
-					domElement.addEventListener(eventName, newProps[propName]);
-				} else {
-					domElement.setAttribute(propName, newProps[propName]);
-				}
+				domElement.setAttribute(propName, newProps[propName]);
 			} else {
-				if (isEventName(propName)) {
-					const eventName = propName.toLowerCase().replace('on', '');
-					domElement.removeEventListener(
-						eventName,
-						oldProps[propName]
-					);
-				} else {
-					domElement.removeAttribute(propName);
-				}
+				domElement.removeAttribute(propName);
 			}
 		});
 	},
@@ -309,37 +228,26 @@ const TinyDOMRenderer = Reconciler({
 	}
 } as any);
 
-export const ReactTinyDOM = {
-	render(
-		element:
-			| boolean
-			| React.ReactChild
-			| React.ReactFragment
-			| React.ReactPortal
-			| null
-			| undefined,
-		callback: () => void | null | undefined
-	) {
-		const domContainer = document.createElement('root');
+export default function renderXML(element: ReactNode) {
+	const domContainer = document.createElement('root');
 
-		// @ts-ignore
-		let root = domContainer._reactRootContainer;
+	// @ts-ignore
+	let root = domContainer._reactRootContainer;
 
-		if (!root) {
-			// Remove all children of the domContainer
-			let rootSibling;
-			while ((rootSibling = domContainer.lastChild)) {
-				domContainer.removeChild(rootSibling);
-			}
-
-			// @ts-ignore
-			const newRoot = TinyDOMRenderer.createContainer(domContainer);
-			// @ts-ignore
-			root = domContainer._reactRootContainer = newRoot;
+	if (!root) {
+		// Remove all children of the domContainer
+		let rootSibling;
+		while ((rootSibling = domContainer.lastChild)) {
+			domContainer.removeChild(rootSibling);
 		}
 
-		TinyDOMRenderer.updateContainer(element, root, null, callback);
-
-		return domContainer.innerHTML;
+		// @ts-ignore
+		const newRoot = TinyDOMRenderer.createContainer(domContainer);
+		// @ts-ignore
+		root = domContainer._reactRootContainer = newRoot;
 	}
-};
+
+	TinyDOMRenderer.updateContainer(element, root, null, () => {});
+
+	return domContainer.innerHTML;
+}

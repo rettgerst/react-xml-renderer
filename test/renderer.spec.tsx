@@ -1,16 +1,36 @@
+/// <reference types="jest" />
+
 import React from 'react';
-import { ReactTinyDOM } from '../renderer/xml';
+import renderXML from '../src/renderer';
+import XML from '../src/XMLElement';
 
-const Link = (props: any) => React.createElement('link', props);
+test('string children', () => {
+	const xml = renderXML(<XML.link foo="bar">hello world</XML.link>);
 
-describe('asdf', () => {
-	test('asdf', () => {
-		const xml = ReactTinyDOM.render(
-			<Link foo="bar">hello world</Link>,
-			() => {}
-		);
-		expect(xml).toMatchInlineSnapshot(
-			`"<link foo=\\"bar\\">hello world</link>"`
-		);
-	});
+	expect(xml).toMatchInlineSnapshot(
+		`"<link foo=\\"bar\\">hello world</link>"`
+	);
+});
+
+test('nested nodes', () => {
+	const xml = renderXML(
+		<XML.foo>
+			<XML.bar></XML.bar>
+		</XML.foo>
+	);
+
+	expect(xml).toMatchInlineSnapshot(`"<foo><bar/></foo>"`);
+});
+
+test('error on bad prop type', () => {
+	const jsx = <XML.foo asdf={new Date() as any}></XML.foo>;
+
+	const spy = jest.spyOn(console, 'error');
+	spy.mockImplementation(() => {});
+
+	expect(() => renderXML(jsx)).toThrowErrorMatchingInlineSnapshot(
+		`"Prop \\"asdf\\" had type object - all attributes must be string or number!"`
+	);
+
+	spy.mockRestore();
 });
