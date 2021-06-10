@@ -1,4 +1,4 @@
-# react-xml
+# react-xml-renderer
 
 this is a small react renderer which allows you to render arbitrary XML using JSX.
 
@@ -7,7 +7,7 @@ this is a small react renderer which allows you to render arbitrary XML using JS
 see [test/renderer.spec.tsx](test/renderer.spec.tsx)
 
 ```tsx
-import renderXML, { XML, xmlElement } from 'react-xml';
+import renderXML, { XML, xmlElement } from 'react-xml-renderer';
 
 // you can create XML elements using the xmlElement helper:
 const Foo = xmlElement('foo');
@@ -138,4 +138,4 @@ this shouldn't matter to us, because we're not writing HTML, we're writing XML. 
 
 # prior art
 
-react-xml is a stripped-down fork of [react-tiny-dom](https://github.com/jiayihu/react-tiny-dom/), and uses [jsdom](https://github.com/jsdom/jsdom) behind-the-scenes.
+react-xml-renderer is a stripped-down fork of [react-tiny-dom](https://github.com/jiayihu/react-tiny-dom/), and uses [jsdom](https://github.com/jsdom/jsdom) behind-the-scenes.

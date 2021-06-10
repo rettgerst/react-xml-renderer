@@ -1,5 +1,5 @@
 {
-	"name": "react-xml",
+	"name": "react-xml-renderer",
 	"version": "0.1.0",
 	"description": "XML renderer for react",
 	"main": "dist/index.js",
