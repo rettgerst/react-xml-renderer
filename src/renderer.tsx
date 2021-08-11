@@ -27,7 +27,7 @@ const { window } = jsdom;
 
 const { document } = window;
 
-const TinyDOMRenderer = Reconciler({
+const ReactXMLRenderer = Reconciler({
 	// appendChild for direct children
 	appendInitialChild(
 		parentInstance: { appendChild: (arg0: any) => void },
@@ -94,7 +94,9 @@ const TinyDOMRenderer = Reconciler({
 	},
 
 	// Commit hooks, useful mainly for react-dom syntethic events
-	prepareForCommit() {},
+	prepareForCommit() {
+		return null;
+	},
 	resetAfterCommit() {},
 
 	// Calculate the updatePayload
@@ -123,13 +125,9 @@ const TinyDOMRenderer = Reconciler({
 		);
 	},
 
-	now: () => {
-		// noop
-	},
+	now: () => performance.now(),
 
 	supportsMutation: true,
-
-	useSyncScheduling: true,
 
 	appendChild(
 		parentInstance: { appendChild: (arg0: any) => void },
@@ -225,8 +223,21 @@ const TinyDOMRenderer = Reconciler({
 
 	resetTextContent(domElement: { textContent: string }) {
 		domElement.textContent = '';
+	},
+
+	supportsPersistence: false,
+	preparePortalMount() {},
+	scheduleTimeout() {},
+	cancelTimeout() {},
+	noTimeout: -1,
+	isPrimaryRenderer: true,
+	supportsHydration: false,
+	clearContainer(container: Element) {
+		while (container.firstChild) {
+			container.firstChild.remove();
+		}
 	}
-} as any);
+});
 
 export default function renderXML(element: ReactNode) {
 	const domContainer = document.createElement('root');
@@ -242,12 +253,12 @@ export default function renderXML(element: ReactNode) {
 		}
 
 		// @ts-ignore
-		const newRoot = TinyDOMRenderer.createContainer(domContainer);
+		const newRoot = ReactXMLRenderer.createContainer(domContainer);
 		// @ts-ignore
 		root = domContainer._reactRootContainer = newRoot;
 	}
 
-	TinyDOMRenderer.updateContainer(element, root, null, () => {});
+	ReactXMLRenderer.updateContainer(element, root, null, () => {});
 
 	return domContainer.innerHTML;
 }

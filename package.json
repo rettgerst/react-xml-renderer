@@ -12,22 +12,22 @@
 	"author": "rett gerst <tricagamma@gmail.com>",
 	"license": "MIT",
 	"dependencies": {
-		"jsdom": "^16.6.0"
+		"jsdom": "^16.7.0"
 	},
 	"devDependencies": {
-		"@tsconfig/node12": "^1.0.8",
-		"@types/fbjs": "^3.0.0",
-		"@types/jest": "^26.0.23",
-		"@types/jsdom": "^16.2.11",
-		"@types/react": "^16.6.1 || ^17.0.1",
-		"@types/react-reconciler": "^0.26.1",
-		"jest": "^27.0.4",
-		"ts-jest": "^27.0.3",
-		"typescript": "^4.3.2"
+		"@tsconfig/node12": "^1.0.9",
+		"@types/fbjs": "^3.0.1",
+		"@types/jest": "^27.0.0",
+		"@types/jsdom": "^16.2.13",
+		"@types/react": "^17.0.17",
+		"@types/react-reconciler": "^0.26.3",
+		"jest": "^27.0.6",
+		"ts-jest": "^27.0.4",
+		"typescript": "^4.3.5"
 	},
 	"peerDependencies": {
-		"react": "^16.6.1 || ^17.0.1",
-		"react-reconciler": "^0.18.0"
+		"react": "^17.0.1",
+		"react-reconciler": "^0.26.0"
 	},
 	"keywords": [
 		"react",
